@@ -79,6 +79,32 @@ const zones = [
   }
 ];
 
+const btnIndices = document.getElementById("btn-indices");
+const panelIndices = document.getElementById("panel-indices");
+const listeIndices = document.getElementById("liste-indices");
+
+function afficherIndices() {
+  listeIndices.innerHTML = "";
+
+  zones.forEach(zone => {
+    const item = document.createElement("div");
+    item.innerHTML = `
+      <p><strong>${zone.name}</strong></p>
+      <p>${zone.description}</p>
+      <hr>
+    `;
+    listeIndices.appendChild(item);
+  });
+
+  panelIndices.classList.remove("hidden");
+}
+
+function fermerIndices() {
+  panelIndices.classList.add("hidden");
+}
+
+btnIndices.addEventListener("click", afficherIndices);
+  
 // (debug visuel - tu peux enlever après)
 zones.forEach(z => {
 L.circle([z.lat, z.lng], {
