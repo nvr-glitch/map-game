@@ -187,33 +187,41 @@ if ("geolocation" in navigator) {
   alert("GPS non supporté");
 }
 // ================= VALIDATION =================
+
 function checkZones(lat, lng) {
-zones.forEach(zone => {
+  zones.forEach(zone => {
 
+    if (zone.found) return;
 
-if (dist < zone.radius) {
-  zone.found = true;
+    const dist = map.distance(
+      [lat, lng],
+      [zone.lat, zone.lng]
+    );
 
-  alert("🎯 Balise découverte : " + zone.name);
+    if (dist < zone.radius) {
+      zone.found = true;
 
-  const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
+      alert("🎯 Balise découverte : " + zone.name);
 
-  discoveredMarker.bindPopup(`
-    <strong>${zone.name}</strong><br><br>
-    ${zone.info || "Aucune information disponible."}
-  `);
+      const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
 
-  discoveredMarker.openPopup();
+      discoveredMarker.bindPopup(`
+        <strong>${zone.name}</strong><br><br>
+        ${zone.info || "Aucune information disponible."}
+      `);
 
-  if (navigator.vibrate) navigator.vibrate(200);
+      discoveredMarker.openPopup();
+
+      L.circle([zone.lat, zone.lng], {
+        radius: zone.radius,
+        color: "green",
+        fillOpacity: 0.2
+      }).addTo(map);
+
+      if (navigator.vibrate) navigator.vibrate(200);
+    }
+  });
 }
-
-// zone devient verte
-L.circle([zone.lat, zone.lng], {
-radius: zone.radius,
-color: 'green',
-fillOpacity: 0.2
-}).addTo(map);
 
 
 </script>
