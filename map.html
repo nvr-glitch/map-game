@@ -57,26 +57,23 @@ const playerIcon = L.divIcon({
   iconSize: [20, 20],
   iconAnchor: [10, 10]
 });
-  
+
 let player = null;
 
-navigator.geolocation.watchPosition(pos => {
-const lat = pos.coords.latitude;
-const lng = pos.coords.longitude;
+function success(pos) {
+  const lat = pos.coords.latitude;
+  const lng = pos.coords.longitude;
 
-if (!player) {
-player = L.circleMarker([lat, lng], {
-radius: 6,
-color: 'blue'
-}).addTo(map);
-} else {
-player.setLatLng([lat, lng]);
+  if (!player) {
+    player = L.marker([lat, lng], {
+      icon: playerIcon
+    }).addTo(map);
+
+    map.setView([lat, lng], 17);
+  } else {
+    player.setLatLng([lat, lng]);
+  }
 }
-
-checkZones(lat, lng);
-});
-
-
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
 zones.forEach(zone => {
