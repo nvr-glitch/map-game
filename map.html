@@ -42,8 +42,6 @@ fillOpacity: 0.1
 });
 
 // ================= JOUEUR =================
-let player = null;
-
 const playerIcon = L.divIcon({
   html: `
     <div style="
@@ -59,7 +57,8 @@ const playerIcon = L.divIcon({
   iconSize: [20, 20],
   iconAnchor: [10, 10]
 });
-
+  
+let player = null;
 
 navigator.geolocation.watchPosition(pos => {
 const lat = pos.coords.latitude;
