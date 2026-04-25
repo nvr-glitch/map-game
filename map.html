@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Jeu orientation</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+html, body { margin:0; height:100%; }
+#map { height:100%; }
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+// ================= CARTE =================
+const map = L.map('map').setView([48.822, 2.337], 15);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: 'OpenStreetMap'
+}).addTo(map);
+
+// ================= ZONES =================
+const zones = [
+{ id: 1, name: "Lac", lat: 48.8223, lng: 2.3376, radius: 40, found: false },
+{ id: 2, name: "Statue", lat: 48.8232, lng: 2.3379, radius: 30, found: false }
+];
+
+// (debug visuel - tu peux enlever après)
+zones.forEach(z => {
+L.circle([z.lat, z.lng], {
+radius: z.radius,
+color: 'red',
+fillOpacity: 0.1
+}).addTo(map);
+});
+
+// ================= JOUEUR =================
+let player = null;
+
+const playerIcon = L.divIcon({
+  html: `
+    <div style="
+      width:20px;
+      height:20px;
+      background:#007bff;
+      border-radius:50%;
+      border:3px solid white;
+      box-shadow:0 0 10px rgba(0,0,0,0.5);
+    "></div>
+  `,
+  className: "",
+  iconSize: [20, 20],
+  iconAnchor: [10, 10]
+});
+
+
+navigator.geolocation.watchPosition(pos => {
+const lat = pos.coords.latitude;
+const lng = pos.coords.longitude;
+
+if (!player) {
+player = L.circleMarker([lat, lng], {
+radius: 6,
+color: 'blue'
+}).addTo(map);
+} else {
+player.setLatLng([lat, lng]);
+}
+
+checkZones(lat, lng);
+});
+
+
+// ================= VALIDATION =================
+function checkZones(lat, lng) {
+zones.forEach(zone => {
+
+if (zone.found) return;
+
+const dist = map.distance([lat, lng], [zone.lat, zone.lng]);
+
+if (dist < zone.radius) {
+zone.found = true;
+
+// feedback joueur
+alert("🎯 Balise trouvée : " + zone.name);
+
+// zone devient verte
+L.circle([zone.lat, zone.lng], {
+radius: zone.radius,
+color: 'green',
+fillOpacity: 0.2
+}).addTo(map);
+
+// vibration (mobile)
+if (navigator.vibrate) navigator.vibrate(200);
+}
+});
+}
+</script>
+
+</body>
+</html>
+
