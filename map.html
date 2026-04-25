@@ -62,8 +62,8 @@ const zones = [
   {
     id: 1,
     name: "Balise 1",
-    lat: 48.817154,
-    lng: 2.332798,
+    lat: 48.8171,
+    lng: 2.3328,
     radius: 10,
     found: false,
     description: "Cherche le grand point d’eau au centre du parc.",
@@ -190,9 +190,6 @@ if ("geolocation" in navigator) {
 function checkZones(lat, lng) {
 zones.forEach(zone => {
 
-if (zone.found) return;
-
-const dist = map.distance([lat, lng], [zone.lat, zone.lng]);
 
 if (dist < zone.radius) {
   zone.found = true;
@@ -218,11 +215,7 @@ color: 'green',
 fillOpacity: 0.2
 }).addTo(map);
 
-// vibration (mobile)
-if (navigator.vibrate) navigator.vibrate(200);
-}
-});
-}
+
 </script>
 
 </body>
