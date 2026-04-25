@@ -42,11 +42,13 @@ fillOpacity: 0.1
 });
 
 // ================= JOUEUR =================
+
+// Icône joueur (point bleu type Google Maps)
 const playerIcon = L.icon({
   iconUrl: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="12" fill="#007bff" stroke="white" stroke-width="5"/>
-      <circle cx="20" cy="20" r="18" fill="none" stroke="#007bff" stroke-opacity="0.35" stroke-width="4"/>
+      <circle cx="20" cy="20" r="10" fill="#007bff" stroke="white" stroke-width="4"/>
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#007bff" stroke-opacity="0.3" stroke-width="4"/>
     </svg>
   `),
   iconSize: [40, 40],
@@ -54,20 +56,60 @@ const playerIcon = L.icon({
 });
 
 let player = null;
+let accuracyCircle = null;
 
+// succès GPS
 function success(pos) {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
+  const accuracy = pos.coords.accuracy;
 
+  console.log("GPS :", lat, lng);
+
+  const position = [lat, lng];
+
+  // création du joueur
   if (!player) {
-  player = L.marker([lat, lng], {
-    icon: playerIcon,
-    zIndexOffset: 1000
-  }).addTo(map);
+    player = L.marker(position, {
+      icon: playerIcon,
+      zIndexOffset: 1000
+    }).addTo(map);
 
-  map.setView([lat, lng], 18);
+    // cercle de précision GPS
+    accuracyCircle = L.circle(position, {
+      radius: accuracy,
+      color: "blue",
+      fillOpacity: 0.1
+    }).addTo(map);
+
+    map.setView(position, 18);
+  } 
+  // mise à jour position
+  else {
+    player.setLatLng(position);
+    accuracyCircle.setLatLng(position);
+    accuracyCircle.setRadius(accuracy);
+  }
+
+  // validation zones
+  checkZones(lat, lng);
+}
+
+// erreur GPS
+function error(err) {
+  console.error(err);
+  alert("Erreur GPS : " + err.message);
+}
+
+// démarrage GPS
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(success, error, {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 15000
+  });
 } else {
-  player.setLatLng([lat, lng]);
+  alert("GPS non supporté");
 }
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
