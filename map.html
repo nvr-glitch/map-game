@@ -62,11 +62,12 @@ const zones = [
   {
     id: 1,
     name: "Balise 1",
-    lat: 48.8223,
-    lng: 2.3376,
-    radius: 40,
+    lat: 48.817154,
+    lng: 2.332798,
+    radius: 10,
     found: false,
     description: "Cherche le grand point d’eau au centre du parc."
+    info: "Le lac du parc Montsouris est l’un des grands repères du parc. Il attire de nombreux oiseaux et sert de point central d’orientation."
   },
   {
     id: 2,
@@ -76,6 +77,7 @@ const zones = [
     radius: 30,
     found: false,
     description: "Monte légèrement au-dessus du lac et cherche une sculpture visible depuis la pelouse."
+    info: "info test"
   }
 ];
 
@@ -193,10 +195,21 @@ if (zone.found) return;
 const dist = map.distance([lat, lng], [zone.lat, zone.lng]);
 
 if (dist < zone.radius) {
-zone.found = true;
+  zone.found = true;
 
-// feedback joueur
-alert("🎯 Balise trouvée : " + zone.name);
+  alert("🎯 Balise découverte : " + zone.name);
+
+  const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+  discoveredMarker.bindPopup(`
+    <strong>${zone.name}</strong><br><br>
+    ${zone.info || "Aucune information disponible."}
+  `);
+
+  discoveredMarker.openPopup();
+
+  if (navigator.vibrate) navigator.vibrate(200);
+}
 
 // zone devient verte
 L.circle([zone.lat, zone.lng], {
