@@ -42,20 +42,15 @@ fillOpacity: 0.1
 });
 
 // ================= JOUEUR =================
-const playerIcon = L.divIcon({
-  html: `
-    <div style="
-      width:20px;
-      height:20px;
-      background:#007bff;
-      border-radius:50%;
-      border:3px solid white;
-      box-shadow:0 0 10px rgba(0,0,0,0.5);
-    "></div>
-  `,
-  className: "",
-  iconSize: [20, 20],
-  iconAnchor: [10, 10]
+const playerIcon = L.icon({
+  iconUrl: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="12" fill="#007bff" stroke="white" stroke-width="5"/>
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#007bff" stroke-opacity="0.35" stroke-width="4"/>
+    </svg>
+  `),
+  iconSize: [40, 40],
+  iconAnchor: [20, 20]
 });
 
 let player = null;
@@ -65,14 +60,14 @@ function success(pos) {
   const lng = pos.coords.longitude;
 
   if (!player) {
-    player = L.marker([lat, lng], {
-      icon: playerIcon
-    }).addTo(map);
+  player = L.marker([lat, lng], {
+    icon: playerIcon,
+    zIndexOffset: 1000
+  }).addTo(map);
 
-    map.setView([lat, lng], 17);
-  } else {
-    player.setLatLng([lat, lng]);
-  }
+  map.setView([lat, lng], 18);
+} else {
+  player.setLatLng([lat, lng]);
 }
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
