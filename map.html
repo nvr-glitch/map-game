@@ -296,7 +296,25 @@ const zones = [
 const btnIndices = document.getElementById("btn-indices");
 const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
+let lastPlayerPosition = null;
+let boussoleActive = false;
+let lassoActive = false;
+  let cibleBoussole = null;
+let cibleLasso = null;
+  
+  function remplirSelectBalises() {
+  const select = document.getElementById("select-balise");
+  select.innerHTML = "";
 
+  zones.forEach(zone => {
+    if (!zone.found) {
+      const option = document.createElement("option");
+      option.value = zone.id;
+      option.textContent = "Balise " + zone.id;
+      select.appendChild(option);
+    }
+  });
+}
 function afficherIndices() {
   if (!panelIndices.classList.contains("hidden")) {
     panelIndices.classList.add("hidden");
@@ -423,9 +441,7 @@ updateChrono();
 setInterval(updateChrono, 1000);
 setInterval(sauvegarderProgression, 5000);
 
-  let cibleBoussole = null;
-let cibleLasso = null;
-  
+
 function updateChrono() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
@@ -555,7 +571,7 @@ document.getElementById("btn-lasso").addEventListener("click", function () {
   this.classList.toggle("active");
   updateJokers();
 });
-}
+
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
@@ -572,9 +588,7 @@ const playerIcon = L.icon({
 
 let player = null;
 let accuracyCircle = null;
-let lastPlayerPosition = null;
-let boussoleActive = false;
-let lassoActive = false;
+
 // succès GPS
 function success(pos) {
   const lat = pos.coords.latitude;
