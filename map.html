@@ -31,27 +31,24 @@ html, body { margin:0; height:100%; }
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
-#progression {
+#hud {
   position: absolute;
-  top: 55px;
-  right: 10px;
+  bottom: 10px;
+  left: 10px;
   z-index: 1000;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.25);
-  font-weight: bold;
+  display: flex;
+  gap: 10px;
 }
-  #chrono {
-  position: absolute;
-  top: 95px;
-  right: 10px;
-  z-index: 1000;
+
+#hud div {
   background: white;
   padding: 8px 12px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.25);
   font-weight: bold;
+  background: rgba(255,255,255,0.9);
+backdrop-filter: blur(5px);
+}
 }
 .hidden {
   display: none;
@@ -68,8 +65,10 @@ html, body { margin:0; height:100%; }
   <div id="liste-indices"></div>
   <button onclick="fermerIndices()">Fermer</button>
 </div>
-<div id="progression"></div>
+<div id="hud">
+  <div id="progression"></div>
   <div id="chrono"></div>
+</div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
@@ -248,11 +247,6 @@ const zones = [
     info: ""
     },
 ];
-updateProgression();
-const btnIndices = document.getElementById("btn-indices");
-const panelIndices = document.getElementById("panel-indices");
-const listeIndices = document.getElementById("liste-indices");
-
   chargerProgression();
 zones.forEach(zone => {
   if (zone.found) {
@@ -270,6 +264,12 @@ zones.forEach(zone => {
     }).addTo(map);
   }
 });
+updateProgression();
+const btnIndices = document.getElementById("btn-indices");
+const panelIndices = document.getElementById("panel-indices");
+const listeIndices = document.getElementById("liste-indices");
+
+ updateChrono();
 function afficherIndices() {
   listeIndices.innerHTML = "";
 
@@ -342,8 +342,9 @@ fillOpacity: 0.1
 
   function validerBalise(zone) {
   zone.found = true;
+    sauvegarderProgression();
 updateProgression();
-  sauvegarderProgression();
+  
   alert("🎯 Balise découverte : Balise " + zone.id);
 
   if (zone.marker) {
@@ -380,7 +381,8 @@ updateProgression();
     `Progression : ${found}/${total}`;
 }
 
-  let startTime = Date.now();
+let startTime = Date.now();
+chargerProgression();
 
 function updateChrono() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -396,27 +398,33 @@ setInterval(updateChrono, 1000);
 updateChrono();
 
 function sauvegarderProgression() {
-  const data = zones.map(zone => ({
-    id: zone.id,
-    found: zone.found
-  }));
+  const data = {
+    zones: zones.map(zone => ({
+      id: zone.id,
+      found: zone.found
+    })),
+    startTime: startTime
+  };
 
-  localStorage.setItem("progression", JSON.stringify(data));
+  localStorage.setItem("progressionJeu", JSON.stringify(data));
 }
 
-  function chargerProgression() {
-  const saved = localStorage.getItem("progression");
+function chargerProgression() {
+  const saved = localStorage.getItem("progressionJeu");
 
   if (!saved) return;
 
   const data = JSON.parse(saved);
 
-  data.forEach(savedZone => {
+  if (data.startTime) {
+    startTime = data.startTime;
+  }
+
+  data.zones.forEach(savedZone => {
     const zone = zones.find(z => z.id === savedZone.id);
-    if (zone) {
-      zone.found = savedZone.found;
-    }
+    if (zone) zone.found = savedZone.found;
   });
+}
 }
 // ================= JOUEUR =================
 
@@ -487,6 +495,8 @@ if ("geolocation" in navigator) {
   });
 } else {
   alert("GPS non supporté");
+
+  setInterval(sauvegarderProgression, 5000);
 }
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
