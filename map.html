@@ -10,24 +10,21 @@
 html, body { margin:0; height:100%; }
 #map { height:100%; }
 
-#hud {
+#topbar {
   position: absolute;
-  bottom: 20px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  display: flex;
-  gap: 10px;
 }
 
-#hud div {
-  background: rgba(255,255,255,0.92);
-  padding: 10px 14px;
+#topbar button {
+  border: none;
   border-radius: 999px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.95);
+  padding: 10px 14px;
   font-weight: bold;
-  background: rgba(255,255,255,0.9);
-backdrop-filter: blur(5px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
 }
 
 #panel-indices {
@@ -43,10 +40,19 @@ backdrop-filter: blur(5px);
   border-radius: 16px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.3);
 }
- 
-  #topbar {
+
+#panel-indices button {
+  margin: 4px 4px 8px 0;
+  border: none;
+  border-radius: 999px;
+  background: #f0f0f0;
+  padding: 8px 12px;
+  font-weight: bold;
+}
+
+#hud {
   position: absolute;
-  top: 10px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
@@ -54,19 +60,16 @@ backdrop-filter: blur(5px);
   gap: 10px;
 }
 
-#topbar button {
-  border: none;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.95);
+#hud div {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(5px);
   padding: 10px 14px;
-  font-weight: bold;
+  border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  font-weight: bold;
 }
-  #topbar button.active {
-  background: #007bff;
-  color: white;
-}
-  #joker-info {
+
+#joker-info {
   position: absolute;
   bottom: 80px;
   left: 50%;
@@ -78,14 +81,7 @@ backdrop-filter: blur(5px);
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
   font-weight: bold;
 }
-  #select-balise {
-  border: none;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.95);
-  padding: 10px 14px;
-  font-weight: bold;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
+
 .hidden {
   display: none;
 }
@@ -98,9 +94,6 @@ backdrop-filter: blur(5px);
 
 <div id="topbar">
   <button id="btn-indices">📜 Indices</button>
-  <button id="btn-boussole">🧭 Boussole</button>
-  <button id="btn-lasso">🪢 Lasso</button>
-  <select id="select-balise"></select>
 </div>
 
 <div id="panel-indices" class="hidden">
@@ -109,19 +102,21 @@ backdrop-filter: blur(5px);
   <button onclick="fermerIndices()">Fermer</button>
 </div>
 
+<div id="joker-info" class="hidden"></div>
+
 <div id="hud">
   <div id="progression"></div>
   <div id="chrono"></div>
 </div>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <div id="joker-info" class="hidden"></div>
 <script>
 // ================= CARTE =================
 const map = L.map('map').setView([48.822, 2.337], 20);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-attribution: 'OpenStreetMap'
+  attribution: 'OpenStreetMap'
 }).addTo(map);
 
 // ================= ZONES =================
@@ -137,7 +132,6 @@ const zones = [
     password: "victor"
   },
   {
-    // Mire du Sud
     id: 1,
     lat: 48.8209,
     lng: 2.33714,
@@ -146,9 +140,8 @@ const zones = [
     description: "Je suis percée d’un œil vers le ciel, vestige d’un Paris scientifique. Vous me trouverez près d'un sentier qui vous évoque le nord de l'Afrique.",
     info: "Cette mire était utilisée au XIXe siècle pour aligner les télescopes de l’Observatoire de Paris avec le méridien de Paris. Elle fait partie des rares vestiges du système de mesure pré-Greenwich."
   },
-    {
-  id: 2,
-    // Colonne de la Paix Armée
+  {
+    id: 2,
     lat: 48.82407,
     lng: 2.33645,
     radius: 10,
@@ -156,9 +149,8 @@ const zones = [
     description: "Depuis la Colonne de la Paix Armée vous pouvez me voir. Vous pourrez débloquer la balise en vous approchant assez pour indiquer l'heure.",
     info: "La Colonnne de la Paix armée est une statue allégorique, déplacée ici depuis l’Esplanade des Invalides, symbolisant la force tranquille. Elle date du Second Empire."
   },
-    {
-      // Stele abandonnée / Séquoia
-     id: 3,
+  {
+    id: 3,
     lat: 48.821941,
     lng: 2.336215,
     radius: 10,
@@ -166,155 +158,180 @@ const zones = [
     description: "Si vous remontez l'allée du Puits vous me verrez abandonnée. Depuis ma position faites quelques pas au sud, jusqu'à trouver un séquoia singulier",
     info: ""
   },
-    {  
-      // Premier Frisson
-  id: 4,
+  {
+    id: 4,
     lat: 48.824110,
     lng: 2.33827,
     radius: 10,
     found: false,
     description: "Non loin de moi vous trouverez un fauve dans ces derniers instants. Pour ma part, je suis aux pieds d'une jeune fille courtisée. Quel animal suis-je?",
     info: "Cette statue met en scène un faune, créature mythologique romaine séduisant une jeune fille délicate évoquant l’émotion à la fois physique et psychologique du frisson. Elle date du début XXe siècle.",
-  password: "mouton"
+    password: "mouton"
   },
-    {
-      // Groupe de baigneuses
-  id: 5,
+  {
+    id: 5,
     lat: 48.8225,
     lng: 2.338830,
     radius: 10,
     found: false,
     description: "Trouvez les deux soeurs de pierre qui prennent le soleil",
     info: "Une œuvre décorative typique des jardins publics du XIXe siècle, inspirée par les nymphes et la mythologie."
-       },
- {
-   // Les Naufragés
-  id: 6,
+  },
+  {
+    id: 6,
     lat: 48.822215,
     lng: 2.33957,
     radius: 10,
     found: false,
     description: "Si vous aimez danser vous nous trouverez plus haut perchés.",
-    info: "La Statue Les Naufragés, réalisée en marbre en 1859, est une sculpture captivante située dans le Parc Montsouris, dans le XIVe arrondissement de Paris. Créée par Antoine Étex, cette œuvre représente un groupe de naufragés, figés dans une scène dramatique et émouvante. Les détails minutieux de la sculpture, tels que les expressions de terreur et de désespoir sur les visages des naufragés, captivent l'attention des visiteurs et les transportent dans un monde de tragédie et de survie.",
- 
-    },
+    info: "La Statue Les Naufragés, réalisée en marbre en 1859, est une sculpture située dans le Parc Montsouris. Créée par Antoine Étex, elle représente un groupe de naufragés dans une scène dramatique."
+  },
   {
-   // Drame du désert
-  id: 7,
+    id: 7,
     lat: 48.82219,
     lng: 2.33707,
     radius: 8,
     found: false,
     description: "Je suis davantage connue pour ma contine pour enfants mais ici vous me trouvez pour vous rassasier. A quelques pas à l'ouest se trouve la sculpture que vous cherchez.",
-    info: "La Drale du Désert est une représentation de 1891 par Georges Gardet sculptée d’un combat une lionne et un serpent, typique de la fascination coloniale pour l’Afrique à l’époque."
-    },
-   {
-     // Pureté
-  id: 8,
+    info: "Le Drame du Désert est une représentation de 1891 par Georges Gardet sculptée d’un combat entre une lionne et un serpent."
+  },
+  {
+    id: 8,
     lat: 48.82096,
     lng: 2.33828,
     radius: 10,
     found: false,
     description: "Trouvez la statue ci-dessous et complètez la phrase: Les ......... de France de france à la ville de Paris pour son Bimillennaire",
     info: "Figure féminine idéalisée, symbole d’innocence et d’esthétique classique dans un contexte romantique.",
-  password: "hellenes"
-    },
+    password: "hellenes"
+  },
   {
-    // Accident de carrière
-  id: 9,
+    id: 9,
     lat: 48.82063,
     lng: 2.34071,
     radius: 10,
     found: false,
     description: "Si vous remontez l'allée du Lac depuis l'entrée sud-est vous me trouverez rapidement sur votre gauche portant mon camarade blessé.",
-    info: "Avant d'être un parc, la plaine Montsouris était occupée par les carrières de Montrouge. Ce passé laissa des traces, et les concepteurs durent faire face à un sous-sol labyrinthique et à la présence de deux voies ferrées. La guerre de 1870 avec la Prusse retarda les travaux, mais le parc fut achevé malgré tout en 1878."
-    },
+    info: "Avant d'être un parc, la plaine Montsouris était occupée par les carrières de Montrouge. Ce passé laissa des traces, et les concepteurs durent composer avec un sous-sol complexe."
+  },
   {
-    // Général San Martin
-  id: 10,
+    id: 10,
     lat: 48.82069,
     lng: 2.33818,
     radius: 10,
     found: false,
     description: "En quelle année est mort le général San Martin. Trouvez le sur son cheval et vous trouverez la réponse",
     info: "Libérateur de l’Argentine, San Martín est célébré ici par la diaspora argentine de Paris, en hommage à sa lutte pour l’indépendance.",
-  password: "1850"
-    },
-   {
-     // Thomas Paine
-  id: 11,
+    password: "1850"
+  },
+  {
+    id: 11,
     lat: 48.82023,
     lng: 2.33993,
     radius: 20,
     found: false,
     description: "Je fus un des principaux artisans de la révolution américaine et on m'a d'ailleurs placé près de là où se joue un sport américain. Trouvez moi et indiquez mon année de naissance",
-    info: "Paine fut l’un des penseurs majeurs des révolutions américaine et française. Il incarne l’idée d’un monde régi par la raison.",
-  password: "1737"
-    },
+    info: "Thomas Paine fut l’un des penseurs majeurs des révolutions américaine et française. Il incarne l’idée d’un monde régi par la raison.",
+    password: "1737"
+  },
   {
-    // Station Météorologique
-  id: 12,
+    id: 12,
     lat: 48.82135,
     lng: 2.33673,
     radius: 10,
     found: false,
     description: "Ma tête est dans les nuages, mes yeux mesurent le vent. Viens me trouver au sommet, là où la science regarde le ciel.",
-    info: "Fondé en 1878, cet observatoire analyse la météo parisienne depuis plus d’un siècle. Un centre discret mais essentiel."
-    },
+    info: "Fondé en 1878, cet observatoire analyse la météo parisienne depuis plus d’un siècle."
+  },
   {
-    // Tombe Pierre Durand
-  id: 13,
+    id: 13,
     lat: 48.821820,
     lng: 2.340625,
     radius: 10,
     found: false,
     description: "Je gis là au nord-ouest de celle que l'on serre au pantalon.",
-    info: "La ligne de Petite Ceinture, voie de chemin de fer, fermée au service régulier des trains de voyageurs depuis 1934, passe par le parc Montsouris. C'est d'abord une tranchée de 150 mètres qui sort du tunnel passant sous la rue Gazan. Puis la voie emprunte un tunnel d'un kilomètre est-ouest qui passe sous le parc."
-    },
-    {
-      // L'arbre couché
-       id: 14,
+    info: "La Petite Ceinture passe par le parc Montsouris. Fermée au service régulier des voyageurs depuis 1934, elle marque encore le paysage du parc."
+  },
+  {
+    id: 14,
     lat: 48.821957,
     lng: 2.3379,
     radius: 10,
     found: false,
     description: "Je suis l'homonyme de Brigitte et si vous prenez mon allée, vous trouverez celui que vous cherchez les branches couchées.",
     info: ""
-    },
-    {
-      // Gingko L'arbre aux 40 écus
-      id: 15,
+  },
+  {
+    id: 15,
     lat: 48.822975,
     lng: 2.337413,
     radius: 10,
     found: false,
     description: "Je me situe au nord du monument en hommage à Flatters. Je fais 25m de haut et 335cm de circonférence.",
     info: ""
-    },
+  }
 ];
-  
+
+// ================= VARIABLES =================
 const btnIndices = document.getElementById("btn-indices");
 const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
+
+let startTime = Date.now();
+let player = null;
+let accuracyCircle = null;
 let lastPlayerPosition = null;
+
 let boussoleActive = false;
 let lassoActive = false;
-  let cibleBoussole = null;
+let cibleBoussole = null;
 let cibleLasso = null;
-  
-  function remplirSelectBalises() {
-  const select = document.getElementById("select-balise");
-  select.innerHTML = "";
 
-  zones.forEach(zone => {
-    if (!zone.found) {
-      const option = document.createElement("option");
-      option.value = zone.id;
-      option.textContent = "Balise " + zone.id;
-      select.appendChild(option);
-    }
+// ================= SAUVEGARDE =================
+function sauvegarderProgression() {
+  const data = {
+    zones: zones.map(zone => ({
+      id: zone.id,
+      found: zone.found
+    })),
+    startTime: startTime
+  };
+
+  localStorage.setItem("progressionJeu", JSON.stringify(data));
+}
+
+function chargerProgression() {
+  const saved = localStorage.getItem("progressionJeu");
+  if (!saved) return;
+
+  const data = JSON.parse(saved);
+
+  if (data.startTime) {
+    startTime = data.startTime;
+  }
+
+  data.zones.forEach(savedZone => {
+    const zone = zones.find(z => z.id === savedZone.id);
+    if (zone) zone.found = savedZone.found;
   });
 }
+
+// ================= INTERFACE =================
+function updateProgression() {
+  const total = zones.length;
+  const found = zones.filter(zone => zone.found).length;
+  document.getElementById("progression").innerHTML = `Progression : ${found}/${total}`;
+}
+
+function updateChrono() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const minutes = Math.floor(elapsed / 60);
+  const seconds = elapsed % 60;
+
+  document.getElementById("chrono").innerHTML =
+    `Temps : ${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 function afficherIndices() {
   if (!panelIndices.classList.contains("hidden")) {
     panelIndices.classList.add("hidden");
@@ -336,6 +353,8 @@ function afficherIndices() {
       item.innerHTML = `
         <strong>Balise ${zone.id} 🔒</strong>
         <p>${zone.description}</p>
+        <button onclick="activerBoussole(${zone.id})">🧭 Boussole</button>
+        <button onclick="activerLasso(${zone.id})">🪢 Lasso</button>
         <hr>
       `;
     }
@@ -350,143 +369,7 @@ function fermerIndices() {
   panelIndices.classList.add("hidden");
 }
 
-  
-// (debug visuel - tu peux enlever après)
-zones.forEach(z => {
-L.circle([z.lat, z.lng], {
-radius: z.radius,
-color: 'red',
-fillOpacity: 0.1
-}).addTo(map);
-});
-
-  function afficherBaliseVerrouillee(zone) {
-  const marker = L.marker([zone.lat, zone.lng]).addTo(map);
-
-  marker.bindPopup(`
-    <strong>Balise ${zone.id}</strong><br><br>
-    ${zone.description}<br><br>
-    <button onclick="essayerCode(${zone.id})">Entrer le code</button>
-  `);
-
-  zone.marker = marker;
-}
-
-  function essayerCode(zoneId) {
-  const zone = zones.find(z => z.id === zoneId);
-
-  if (!zone || zone.found) return;
-
-  const code = prompt("🔐 Entre le code de la Balise " + zone.id);
-
-  if (!code) return; // le joueur peut annuler et revenir plus tard
-
-  if (code.trim().toLowerCase() === zone.password.toLowerCase()) {
-    validerBalise(zone);
-  } else {
-    alert("❌ Code incorrect. Tu peux réessayer plus tard.");
-  }
-}
-
-  function validerBalise(zone) {
-  zone.found = true;
-    sauvegarderProgression();
-updateProgression();
-  remplirSelectBalises();
-updateJokers();
-  alert("🎯 Balise découverte : Balise " + zone.id);
-
-  if (zone.marker) {
-    zone.marker.setPopupContent(`
-      <strong>Balise ${zone.id}</strong><br><br>
-      ${zone.info || "Aucune information disponible."}
-    `);
-    zone.marker.openPopup();
-  } else {
-    const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
-
-    discoveredMarker.bindPopup(`
-      <strong>Balise ${zone.id}</strong><br><br>
-      ${zone.info || "Aucune information disponible."}
-    `);
-
-    discoveredMarker.openPopup();
-  }
-
-  L.circle([zone.lat, zone.lng], {
-    radius: zone.radius,
-    color: "green",
-    fillOpacity: 0.2
-  }).addTo(map);
-
-  if (navigator.vibrate) navigator.vibrate(200);
-}
-
-  function updateProgression() {
-  const total = zones.length;
-  const found = zones.filter(zone => zone.found).length;
-
-  document.getElementById("progression").innerHTML =
-    `Progression : ${found}/${total}`;
-}
-
-let startTime = Date.now();
-
-chargerProgression();
-  remplirSelectBalises();
-afficherBalisesDejaTrouvees();
-updateProgression();
-updateChrono();
-
-setInterval(updateChrono, 1000);
-setInterval(sauvegarderProgression, 5000);
-
-
-function updateChrono() {
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-
-  const minutes = Math.floor(elapsed / 60);
-  const seconds = elapsed % 60;
-
-  document.getElementById("chrono").innerHTML =
-    `Temps : ${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-
-function sauvegarderProgression() {
-  const data = {
-    zones: zones.map(zone => ({
-      id: zone.id,
-      found: zone.found
-    })),
-    startTime: startTime
-  };
-
-  localStorage.setItem("progressionJeu", JSON.stringify(data));
-}
-
-function chargerProgression() {
-  const saved = localStorage.getItem("progressionJeu");
-
-  if (!saved) return;
-
-  const data = JSON.parse(saved);
-
-  if (data.startTime) {
-    startTime = data.startTime;
-  }
-
-  data.zones.forEach(savedZone => {
-    const zone = zones.find(z => z.id === savedZone.id);
-    if (zone) zone.found = savedZone.found;
-  });
-}
-function getBaliseCible() {
-  const select = document.getElementById("select-balise");
-  const id = Number(select.value);
-  return zones.find(zone => zone.id === id && !zone.found);
-}
-
+// ================= JOKERS =================
 function calculerDirection(lat1, lng1, lat2, lng2) {
   const dLng = (lng2 - lng1) * Math.PI / 180;
   lat1 = lat1 * Math.PI / 180;
@@ -511,10 +394,32 @@ function directionTexte(angle) {
   return "Nord-Ouest";
 }
 
+function activerBoussole(zoneId) {
+  cibleBoussole = zones.find(z => z.id === zoneId && !z.found);
+  if (!cibleBoussole) return;
+
+  boussoleActive = true;
+  panelIndices.classList.add("hidden");
+  updateJokers();
+}
+
+function activerLasso(zoneId) {
+  cibleLasso = zones.find(z => z.id === zoneId && !z.found);
+  if (!cibleLasso) return;
+
+  lassoActive = true;
+  panelIndices.classList.add("hidden");
+  updateJokers();
+}
+
 function updateJokers() {
   const info = document.getElementById("joker-info");
 
-  if (!lastPlayerPosition) return;
+  if (!lastPlayerPosition) {
+    info.innerHTML = "Localisation en attente...";
+    info.classList.remove("hidden");
+    return;
+  }
 
   let texte = "";
 
@@ -548,107 +453,72 @@ function updateJokers() {
   info.innerHTML = texte;
   info.classList.remove("hidden");
 }
-document.getElementById("btn-indices").addEventListener("click", afficherIndices);
 
-document.getElementById("btn-boussole").addEventListener("click", function () {
-  if (!boussoleActive) {
-    cibleBoussole = getBaliseCible();
-    if (!cibleBoussole) return alert("Choisis une balise disponible.");
+// ================= BALISES =================
+function afficherBaliseVerrouillee(zone) {
+  const marker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+  marker.bindPopup(`
+    <strong>Balise ${zone.id}</strong><br><br>
+    ${zone.description}<br><br>
+    <button onclick="essayerCode(${zone.id})">Entrer le code</button>
+  `);
+
+  zone.marker = marker;
+}
+
+function essayerCode(zoneId) {
+  const zone = zones.find(z => z.id === zoneId);
+
+  if (!zone || zone.found) return;
+
+  const code = prompt("🔐 Entre le code de la Balise " + zone.id);
+
+  if (!code) return;
+
+  if (code.trim().toLowerCase() === zone.password.toLowerCase()) {
+    validerBalise(zone);
+  } else {
+    alert("❌ Code incorrect. Tu peux réessayer plus tard.");
+  }
+}
+
+function validerBalise(zone) {
+  zone.found = true;
+
+  sauvegarderProgression();
+  updateProgression();
+  updateJokers();
+
+  alert("🎯 Balise découverte : Balise " + zone.id);
+
+  if (zone.marker) {
+    zone.marker.setPopupContent(`
+      <strong>Balise ${zone.id}</strong><br><br>
+      ${zone.info || "Aucune information disponible."}
+    `);
+    zone.marker.openPopup();
+  } else {
+    const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+    discoveredMarker.bindPopup(`
+      <strong>Balise ${zone.id}</strong><br><br>
+      ${zone.info || "Aucune information disponible."}
+    `);
+
+    discoveredMarker.openPopup();
   }
 
-  boussoleActive = !boussoleActive;
-  this.classList.toggle("active");
-  updateJokers();
-});
+  L.circle([zone.lat, zone.lng], {
+    radius: zone.radius,
+    color: "green",
+    fillOpacity: 0.2
+  }).addTo(map);
 
-document.getElementById("btn-lasso").addEventListener("click", function () {
-  if (!lassoActive) {
-    cibleLasso = getBaliseCible();
-    if (!cibleLasso) return alert("Choisis une balise disponible.");
-  }
-
-  lassoActive = !lassoActive;
-  this.classList.toggle("active");
-  updateJokers();
-});
-
-// ================= JOUEUR =================
-
-// Icône joueur (point bleu type Google Maps)
-const playerIcon = L.icon({
-  iconUrl: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="10" fill="#007bff" stroke="white" stroke-width="4"/>
-      <circle cx="20" cy="20" r="18" fill="none" stroke="#007bff" stroke-opacity="0.3" stroke-width="4"/>
-    </svg>
-  `),
-  iconSize: [40, 40],
-  iconAnchor: [20, 20]
-});
-
-let player = null;
-let accuracyCircle = null;
-
-// succès GPS
-function success(pos) {
-  const lat = pos.coords.latitude;
-  const lng = pos.coords.longitude;
-  const accuracy = pos.coords.accuracy;
-
-  console.log("GPS :", lat, lng);
-
-  const position = [lat, lng];
-lastPlayerPosition = { lat, lng };
-
-if (boussoleActive || lassoActive) {
-  updateJokers();
-}
-  // création du joueur
-  if (!player) {
-    player = L.marker(position, {
-      icon: playerIcon,
-      zIndexOffset: 1000
-    }).addTo(map);
-
-    // cercle de précision GPS
-    accuracyCircle = L.circle(position, {
-      radius: accuracy,
-      color: "blue",
-      fillOpacity: 0.1
-    }).addTo(map);
-
-    map.setView(position, 18);
-  } 
-  // mise à jour position
-  else {
-    player.setLatLng(position);
-    accuracyCircle.setLatLng(position);
-    accuracyCircle.setRadius(accuracy);
-  }
-
-  // validation zones
-  checkZones(lat, lng);
+  if (navigator.vibrate) navigator.vibrate(200);
 }
 
-// erreur GPS
-function error(err) {
-  console.error(err);
-  alert("Erreur GPS : " + err.message);
-}
-
-// démarrage GPS
-if ("geolocation" in navigator) {
-  navigator.geolocation.watchPosition(success, error, {
-    enableHighAccuracy: true,
-    maximumAge: 0,
-    timeout: 15000
-  });
-} else {
-  alert("GPS non supporté");
-
-}
-
-  function afficherBalisesDejaTrouvees() {
+function afficherBalisesDejaTrouvees() {
   zones.forEach(zone => {
     if (zone.found) {
       const marker = L.marker([zone.lat, zone.lng]).addTo(map);
@@ -667,23 +537,18 @@ if ("geolocation" in navigator) {
   });
 }
 
-
-// ================= VALIDATION =================
 function checkZones(lat, lng) {
   zones.forEach(zone => {
-
     if (zone.found) return;
 
     const dist = map.distance([lat, lng], [zone.lat, zone.lng]);
 
     if (dist < zone.radius) {
-
       if (zone.password) {
         if (!zone.marker) {
           afficherBaliseVerrouillee(zone);
           zone.marker.openPopup();
         }
-
         return;
       }
 
@@ -692,6 +557,74 @@ function checkZones(lat, lng) {
   });
 }
 
+// ================= JOUEUR =================
+const playerIcon = L.icon({
+  iconUrl: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="10" fill="#007bff" stroke="white" stroke-width="4"/>
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#007bff" stroke-opacity="0.3" stroke-width="4"/>
+    </svg>
+  `),
+  iconSize: [40, 40],
+  iconAnchor: [20, 20]
+});
+
+function success(pos) {
+  const lat = pos.coords.latitude;
+  const lng = pos.coords.longitude;
+  const accuracy = pos.coords.accuracy;
+
+  const position = [lat, lng];
+  lastPlayerPosition = { lat, lng };
+
+  if (!player) {
+    player = L.marker(position, {
+      icon: playerIcon,
+      zIndexOffset: 1000
+    }).addTo(map);
+
+    accuracyCircle = L.circle(position, {
+      radius: accuracy,
+      color: "blue",
+      fillOpacity: 0.1
+    }).addTo(map);
+
+    map.setView(position, 18);
+  } else {
+    player.setLatLng(position);
+    accuracyCircle.setLatLng(position);
+    accuracyCircle.setRadius(accuracy);
+  }
+
+  updateJokers();
+  checkZones(lat, lng);
+}
+
+function error(err) {
+  console.error(err);
+  alert("Erreur GPS : " + err.message);
+}
+
+// ================= INIT =================
+chargerProgression();
+afficherBalisesDejaTrouvees();
+updateProgression();
+updateChrono();
+
+setInterval(updateChrono, 1000);
+setInterval(sauvegarderProgression, 5000);
+
+btnIndices.addEventListener("click", afficherIndices);
+
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(success, error, {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 15000
+  });
+} else {
+  alert("GPS non supporté");
+}
 </script>
 
 </body>
