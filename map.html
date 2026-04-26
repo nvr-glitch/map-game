@@ -61,7 +61,7 @@ attribution: 'OpenStreetMap'
 const zones = [
   {
     id: 0,
-    name: "Balise Test",
+    name: "Balise " + zone.id
     lat: 48.8171,
     lng: 2.3328,
     radius: 10,
@@ -71,8 +71,9 @@ const zones = [
     password: "victor"
   },
   {
+    // Mire du Sud
     id: 1,
-    name: "Mire du Sud",
+    name: "Balise 1",
     lat: 48.8209,
     lng: 2.33714,
     radius: 20,
@@ -82,40 +83,43 @@ const zones = [
   },
     {
   id: 2,
-    name: "Colonne de la Paix Armée",
-    lat: 48.82367,
-    lng: 2.33638,
+    // Colonne de la Paix Armée
+    name: "Balise 2",
+    lat: 48.824075,
+    lng: 2.336351,
     radius: 10,
     found: false,
-    description: "À l’entrée du jardin, je lève la main non pour frapper, mais pour garder la paix. Casquée et calme, j’accueille les visiteurs sans jamais reculer.",
-    info: "Cette statue allégorique, déplacée ici depuis l’Esplanade des Invalides, symbolise la force tranquille. Elle date du Second Empire."
+    description: "Depuis la Colonne de la Paix Armée vous pouvez me voir. Vous pourrez débloquer la balise en vous approchant assez pour indiquer l'heure.",
+    info: "La Colonnne de la Paix armée est une statue allégorique, déplacée ici depuis l’Esplanade des Invalides, symbolisant la force tranquille. Elle date du Second Empire."
   },
     {
+      // Stele abandonnée / Séquoia
      id: 3,
-    name: "La Mort du Lion",
-    lat: 48.82386,
-    lng: 2.33814,
+    name: "Balise 3",
+    lat: 481941,
+    lng: 2.336215,
     radius: 10,
     found: false,
-    description: "Près de cette balise vous entendrez peut être un dernier rugissement",
-    info: "Cette œuvre de 1929 d'Edmond Desca nommée La Mort du Lion représente la noblesse et la douleur d’un fauve mourant. Un moment figé dans la tragédie."
+    description: "Si vous remontez l'allée du Puits vous me verrez abandonnée. Depuis ma position faites quelques pas au sud, jusqu'à trouver un séquoia singulier",
+    info: ""
   },
     {  
+      // Premier Frisson
   id: 4,
-    name: "Premier Frisson",
-    lat: 48.82069,
-    lng: 2.33818,
+    name: "Balise 4",
+    lat: 48.824110,
+    lng: 2.338231,
     radius: 10,
     found: false,
-    description: "Cette statue met en scène un faune, créature mythologique romaine séduisant une jeune fille. Quel est l'animal à leurs pieds ?",
-    info: "Cette sculpture délicate d’une jeune fille évoque l’émotion à la fois physique et psychologique du frisson. Elle date du début XXe siècle.",
+    description: "Non loin de moi vous trouverez un fauve dans ces derniers instants. Pour ma part, je suis aux pieds d'une jeune fille courtisée. Quel animal suis-je?",
+    info: "Cette statue met en scène un faune, créature mythologique romaine séduisant une jeune fille délicate évoquant l’émotion à la fois physique et psychologique du frisson. Elle date du début XXe siècle.",
   password: "mouton"
   },
     {
   id: 5,
     name: "Groupe de baigneuses",
-    lat: 48.8238,
-    lng: 2.3370,
+    lat: 48.8225,
+    lng: 2.339507,
     radius: 10,
     found: false,
     description: "Trouvez les deux soeurs de pierre qui prennent le soleil",
@@ -124,13 +128,13 @@ const zones = [
  {
   id: 6,
     name: "Les Naufragés",
-    lat: 48.82237,
-    lng: 2.33959,
+    lat: 48.82215,
+    lng: 2.339507,
     radius: 10,
     found: false,
-    description: "Si vous aimez danser vous me trouverez non loin. Entre deux dates vous trouverez le nom du sculpteur qui m'a fait. Quel est-il?",
+    description: "Si vous aimez danser vous nous trouverez plus haut perchés.",
     info: "La Statue Les Naufragés, réalisée en marbre en 1859, est une sculpture captivante située dans le Parc Montsouris, dans le XIVe arrondissement de Paris. Créée par Antoine Étex, cette œuvre représente un groupe de naufragés, figés dans une scène dramatique et émouvante. Les détails minutieux de la sculpture, tels que les expressions de terreur et de désespoir sur les visages des naufragés, captivent l'attention des visiteurs et les transportent dans un monde de tragédie et de survie.",
-  password: "etex"
+ 
     },
   {
   id: 7,
@@ -139,8 +143,8 @@ const zones = [
     lng: 2.3373,
     radius: 10,
     found: false,
-    description: "Cette sculpture nommée Drame au Désert met en scène une lionne en prise avec un serpent.",
-    info: "Représentation de 1891 par Georges Gardet sculptée d’un combat entre animaux exotiques, typique de la fascination coloniale pour l’Afrique à l’époque."
+    description: "Je suis davantage connue pour ma contine pour enfants mais ici vous me trouvez pour vous rassasier. A quelques pas à l'ouest se trouve la sculpture que vous cherchez.",
+    info: "La Drale du Désert est une représentation de 1891 par Georges Gardet sculptée d’un combat une lionne et un serpent, typique de la fascination coloniale pour l’Afrique à l’époque."
     },
    {
   id: 8,
@@ -156,11 +160,11 @@ const zones = [
   {
   id: 9,
     name: "L'accident de carrière",
-    lat: 48.8250,
-    lng: 2.3385,
+    lat: 48.820770,
+    lng: 2.340620,
     radius: 10,
     found: false,
-    description: "Je raconte le dur passé des hommes de la pierre. Trouve la scène gravée près d’un talus boisé, témoin d’un métier oublié.",
+    description: "Si vous remontez l'allée du Lac depuis l'entrée sud-est vous me trouverez rapidement sur votre gauche portant mon camarade blessé.",
     info: "Avant d'être un parc, la plaine Montsouris était occupée par les carrières de Montrouge. Ce passé laissa des traces, et les concepteurs durent faire face à un sous-sol labyrinthique et à la présence de deux voies ferrées. La guerre de 1870 avec la Prusse retarda les travaux, mais le parc fut achevé malgré tout en 1878."
     },
   {
@@ -179,7 +183,7 @@ const zones = [
     name: "Le Citoyen du Monde",
     lat: 48.82023,
     lng: 2.33993,
-    radius: 10,
+    radius: 20,
     found: false,
     description: "Je fus un des principaux artisans de la révolution américaine et on m'a d'ailleurs placé près de là où se joue un sport américain. Trouvez moi et indiquez mon année de naissance",
     info: "Paine fut l’un des penseurs majeurs des révolutions américaine et française. Il incarne l’idée d’un monde régi par la raison.",
@@ -194,6 +198,34 @@ const zones = [
     found: false,
     description: "Ma tête est dans les nuages, mes yeux mesurent le vent. Viens me trouver au sommet, là où la science regarde le ciel.",
     info: "Fondé en 1878, cet observatoire analyse la météo parisienne depuis plus d’un siècle. Un centre discret mais essentiel."
+    },
+
+  id: 13,
+    name: "Pierre Durand",
+    lat: 48.82135,
+    lng: 2.33673,
+    radius: 10,
+    found: false,
+    description: "Je gis là au nord-ouest de celle que l'on serre au pantalon.",
+    info: "La ligne de Petite Ceinture, voie de chemin de fer, fermée au service régulier des trains de voyageurs depuis 1934, passe par le parc Montsouris. C'est d'abord une tranchée de 150 mètres qui sort du tunnel passant sous la rue Gazan. Puis la voie emprunte un tunnel d'un kilomètre est-ouest qui passe sous le parc."
+    },
+       id: 14,
+    name: "L'arbre couché",
+    lat: 48.821957,
+    lng: 2.3379,
+    radius: 10,
+    found: false,
+    description: "Je suis l'homonyme de Brigitte et si vous prenez mon allée, vous trouverez celui que vous cherchez les branches couchées.",
+    info: ""
+    },
+      id: 15,
+    name: "L'arbre aux quarante écus",
+    lat: 48.822975,
+    lng: 2.337413,
+    radius: 10,
+    found: false,
+    description: "Je me situe au nord du monument en hommage à Flatters. Je fais 25m de haut et 335cm de circonférence.",
+    info: ""
     },
 ];
 
