@@ -31,7 +31,28 @@ html, body { margin:0; height:100%; }
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
-
+#progression {
+  position: absolute;
+  top: 55px;
+  right: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+  font-weight: bold;
+}
+  #chrono {
+  position: absolute;
+  top: 95px;
+  right: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+  font-weight: bold;
+}
 .hidden {
   display: none;
 }
@@ -47,6 +68,8 @@ html, body { margin:0; height:100%; }
   <div id="liste-indices"></div>
   <button onclick="fermerIndices()">Fermer</button>
 </div>
+<div id="progression"></div>
+  <div id="chrono"></div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
@@ -225,7 +248,7 @@ const zones = [
     info: ""
     },
 ];
-
+updateProgression();
 const btnIndices = document.getElementById("btn-indices");
 const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
@@ -235,11 +258,22 @@ function afficherIndices() {
 
   zones.forEach(zone => {
     const item = document.createElement("div");
-    item.innerHTML = `
-     <strong>Balise ${zone.id}</strong>
-      <p>${zone.description}</p>
-      <hr>
-    `;
+
+    let contenu = "";
+
+    if (zone.found) {
+      contenu = `
+        <strong>Balise ${zone.id} ✅</strong>
+        <p>${zone.info || "Aucune information disponible."}</p>
+      `;
+    } else {
+      contenu = `
+        <strong>Balise ${zone.id} 🔒</strong>
+        <p>${zone.description}</p>
+      `;
+    }
+
+    item.innerHTML = contenu + "<hr>";
     listeIndices.appendChild(item);
   });
 
@@ -291,7 +325,7 @@ fillOpacity: 0.1
 
   function validerBalise(zone) {
   zone.found = true;
-
+updateProgression();
   alert("🎯 Balise découverte : Balise " + zone.id);
 
   if (zone.marker) {
@@ -320,6 +354,28 @@ fillOpacity: 0.1
   if (navigator.vibrate) navigator.vibrate(200);
 }
 
+  function updateProgression() {
+  const total = zones.length;
+  const found = zones.filter(zone => zone.found).length;
+
+  document.getElementById("progression").innerHTML =
+    `Progression : ${found}/${total}`;
+}
+
+  let startTime = Date.now();
+
+function updateChrono() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+  const minutes = Math.floor(elapsed / 60);
+  const seconds = elapsed % 60;
+
+  document.getElementById("chrono").innerHTML =
+    `Temps : ${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+setInterval(updateChrono, 1000);
+updateChrono();
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
