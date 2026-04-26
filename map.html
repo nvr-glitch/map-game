@@ -391,7 +391,6 @@ if ("geolocation" in navigator) {
   alert("GPS non supporté");
 }
 // ================= VALIDATION =================
-
 function checkZones(lat, lng) {
   zones.forEach(zone => {
 
@@ -407,34 +406,10 @@ function checkZones(lat, lng) {
           zone.marker.openPopup();
         }
 
-        return; // non bloquant : le joueur peut partir et revenir
+        return;
       }
 
       validerBalise(zone);
-    }
-  });
-}
-
-      zone.found = true;
-
-     alert("🎯 Balise découverte : Balise " + zone.id);
-
-      const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
-
-      discoveredMarker.bindPopup(`
-  <strong>Balise ${zone.id}</strong><br><br>
-  ${zone.info || "Aucune information disponible."}
-`);
-
-      discoveredMarker.openPopup();
-
-      L.circle([zone.lat, zone.lng], {
-        radius: zone.radius,
-        color: "green",
-        fillOpacity: 0.2
-      }).addTo(map);
-
-      if (navigator.vibrate) navigator.vibrate(200);
     }
   });
 }
@@ -443,4 +418,3 @@ function checkZones(lat, lng) {
 
 </body>
 </html>
-
