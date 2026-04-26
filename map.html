@@ -121,7 +121,7 @@ html, body { margin:0; height:100%; }
   <button onclick="fermerIndices()">Fermer</button>
 </div>
 
-<div id="joker-info" class="hidden"></div>
+
 <div id="compass" class="hidden">
   <div id="compass-arrow">⬆️</div>
 </div>
@@ -307,7 +307,8 @@ let boussoleActive = false;
 let lassoActive = false;
 let cibleBoussole = null;
 let cibleLasso = null;
-
+let baliseSelectionnee = null;
+  
 // ================= SAUVEGARDE =================
 function sauvegarderProgression() {
   const data = {
@@ -372,12 +373,21 @@ function afficherIndices() {
       `;
     } else {
       item.innerHTML = `
-        <strong>Balise ${zone.id} 🔒</strong>
-        <p>${zone.description}</p>
-        <button onclick="activerBoussole(${zone.id})">🧭 Boussole</button>
-        <button onclick="activerLasso(${zone.id})">🪢 Lasso</button>
-        <hr>
-      `;
+  <strong>Balise ${zone.id} 🔒</strong>
+  <p>${zone.description}</p>
+  <div id="joker-zone-${zone.id}"></div>
+  <hr>
+`;
+      item.onclick = function () {
+  if (!zone.found) {
+    baliseSelectionnee = zone;
+    cibleBoussole = zone;
+    cibleLasso = zone;
+    boussoleActive = true;
+    lassoActive = true;
+    updateJokers();
+  }
+};
     }
 
     listeIndices.appendChild(item);
@@ -435,51 +445,37 @@ function activerLasso(zoneId) {
 }
 
 function updateJokers() {
-  const info = document.getElementById("joker-info");
+  if (!baliseSelectionnee || !lastPlayerPosition) return;
 
-  if (!lastPlayerPosition) {
-    info.innerHTML = "Localisation en attente...";
-    info.classList.remove("hidden");
-    return;
-  }
+  const zoneDiv = document.getElementById(`joker-zone-${baliseSelectionnee.id}`);
+  if (!zoneDiv) return;
 
-  let texte = "";
+  const distance = Math.round(
+    map.distance(
+      [lastPlayerPosition.lat, lastPlayerPosition.lng],
+      [baliseSelectionnee.lat, baliseSelectionnee.lng]
+    )
+  );
 
-  if (boussoleActive && cibleBoussole && !cibleBoussole.found) {
-    const angle = calculerDirection(
-      lastPlayerPosition.lat,
-      lastPlayerPosition.lng,
-      cibleBoussole.lat,
-      cibleBoussole.lng
-    );
+  const angle = calculerDirection(
+    lastPlayerPosition.lat,
+    lastPlayerPosition.lng,
+    baliseSelectionnee.lat,
+    baliseSelectionnee.lng
+  );
 
-    const rotation = angle - heading;
-
-document.getElementById("compass").classList.remove("hidden");
-document.getElementById("compass-arrow").style.transform =
-  `rotate(${rotation}deg)`;
-
-texte += `🧭 Balise ${cibleBoussole.id}`;
-  }
-
-  if (lassoActive && cibleLasso && !cibleLasso.found) {
-    const distance = Math.round(
-      map.distance(
-        [lastPlayerPosition.lat, lastPlayerPosition.lng],
-        [cibleLasso.lat, cibleLasso.lng]
-      )
-    );
-
-    texte += `🪢 Balise ${cibleLasso.id} : ${distance} m`;
-  }
-
-  if (!texte) {
-    info.classList.add("hidden");
-    return;
-  }
-
-  info.innerHTML = texte;
-  info.classList.remove("hidden");
+  zoneDiv.innerHTML = `
+    <div style="
+      margin-top:8px;
+      padding:10px;
+      background:#f2f6ff;
+      border-radius:12px;
+      font-weight:bold;
+    ">
+      🧭 Direction : ${directionTexte(angle)}<br>
+      🪢 Distance : ${distance} m
+    </div>
+  `;
 }
   
 function startCompass() {
