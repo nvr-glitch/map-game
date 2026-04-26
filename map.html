@@ -310,7 +310,6 @@ function fermerIndices() {
   panelIndices.classList.add("hidden");
 }
 
-btnIndices.addEventListener("click", afficherIndices);
   
 // (debug visuel - tu peux enlever après)
 zones.forEach(z => {
@@ -504,7 +503,9 @@ function updateJokers() {
   info.innerHTML = texte;
   info.classList.remove("hidden");
 }
- document.getElementById("btn-boussole").addEventListener("click", function () {
+document.getElementById("btn-indices").addEventListener("click", afficherIndices);
+
+document.getElementById("btn-boussole").addEventListener("click", function () {
   boussoleActive = !boussoleActive;
   this.classList.toggle("active");
   updateJokers();
