@@ -82,8 +82,8 @@ const zones = [
     {
   id: 2,
     // Colonne de la Paix Armée
-    lat: 48.824075,
-    lng: 2.336351,
+    lat: 48.82407,
+    lng: 2.33645,
     radius: 10,
     found: false,
     description: "Depuis la Colonne de la Paix Armée vous pouvez me voir. Vous pourrez débloquer la balise en vous approchant assez pour indiquer l'heure.",
@@ -92,7 +92,7 @@ const zones = [
     {
       // Stele abandonnée / Séquoia
      id: 3,
-    lat: 48.1941,
+    lat: 48.821941,
     lng: 2.336215,
     radius: 10,
     found: false,
@@ -103,7 +103,7 @@ const zones = [
       // Premier Frisson
   id: 4,
     lat: 48.824110,
-    lng: 2.338231,
+    lng: 2.33827,
     radius: 10,
     found: false,
     description: "Non loin de moi vous trouverez un fauve dans ces derniers instants. Pour ma part, je suis aux pieds d'une jeune fille courtisée. Quel animal suis-je?",
@@ -111,18 +111,20 @@ const zones = [
   password: "mouton"
   },
     {
+      // Groupe de baigneuses
   id: 5,
     lat: 48.8225,
-    lng: 2.339507,
+    lng: 2.338830,
     radius: 10,
     found: false,
     description: "Trouvez les deux soeurs de pierre qui prennent le soleil",
     info: "Une œuvre décorative typique des jardins publics du XIXe siècle, inspirée par les nymphes et la mythologie."
        },
  {
+   // Les Naufragés
   id: 6,
-    lat: 48.82215,
-    lng: 2.339507,
+    lat: 48.822215,
+    lng: 2.33957,
     radius: 10,
     found: false,
     description: "Si vous aimez danser vous nous trouverez plus haut perchés.",
@@ -130,15 +132,17 @@ const zones = [
  
     },
   {
+   // Drame du désert
   id: 7,
     lat: 48.82219,
-    lng: 2.3373,
-    radius: 10,
+    lng: 2.33707,
+    radius: 8,
     found: false,
     description: "Je suis davantage connue pour ma contine pour enfants mais ici vous me trouvez pour vous rassasier. A quelques pas à l'ouest se trouve la sculpture que vous cherchez.",
     info: "La Drale du Désert est une représentation de 1891 par Georges Gardet sculptée d’un combat une lionne et un serpent, typique de la fascination coloniale pour l’Afrique à l’époque."
     },
    {
+     // Pureté
   id: 8,
     lat: 48.82096,
     lng: 2.33828,
@@ -149,15 +153,17 @@ const zones = [
   password: "hellenes"
     },
   {
+    // Accident de carrière
   id: 9,
-    lat: 48.820770,
-    lng: 2.340620,
+    lat: 48.82063,
+    lng: 2.34071,
     radius: 10,
     found: false,
     description: "Si vous remontez l'allée du Lac depuis l'entrée sud-est vous me trouverez rapidement sur votre gauche portant mon camarade blessé.",
     info: "Avant d'être un parc, la plaine Montsouris était occupée par les carrières de Montrouge. Ce passé laissa des traces, et les concepteurs durent faire face à un sous-sol labyrinthique et à la présence de deux voies ferrées. La guerre de 1870 avec la Prusse retarda les travaux, mais le parc fut achevé malgré tout en 1878."
     },
   {
+    // Général San Martin
   id: 10,
     lat: 48.82069,
     lng: 2.33818,
@@ -168,6 +174,7 @@ const zones = [
   password: "1850"
     },
    {
+     // Thomas Paine
   id: 11,
     lat: 48.82023,
     lng: 2.33993,
@@ -178,6 +185,7 @@ const zones = [
   password: "1737"
     },
   {
+    // Station Météorologique
   id: 12,
     lat: 48.82135,
     lng: 2.33673,
@@ -187,15 +195,17 @@ const zones = [
     info: "Fondé en 1878, cet observatoire analyse la météo parisienne depuis plus d’un siècle. Un centre discret mais essentiel."
     },
   {
+    // Tombe Pierre Durand
   id: 13,
-    lat: 48.82135,
-    lng: 2.33673,
+    lat: 48.821820,
+    lng: 2.340625,
     radius: 10,
     found: false,
     description: "Je gis là au nord-ouest de celle que l'on serre au pantalon.",
     info: "La ligne de Petite Ceinture, voie de chemin de fer, fermée au service régulier des trains de voyageurs depuis 1934, passe par le parc Montsouris. C'est d'abord une tranchée de 150 mètres qui sort du tunnel passant sous la rue Gazan. Puis la voie emprunte un tunnel d'un kilomètre est-ouest qui passe sous le parc."
     },
     {
+      // L'arbre couché
        id: 14,
     lat: 48.821957,
     lng: 2.3379,
@@ -205,6 +215,7 @@ const zones = [
     info: ""
     },
     {
+      // Gingko L'arbre aux 40 écus
       id: 15,
     lat: 48.822975,
     lng: 2.337413,
@@ -249,6 +260,65 @@ color: 'red',
 fillOpacity: 0.1
 }).addTo(map);
 });
+
+  function afficherBaliseVerrouillee(zone) {
+  const marker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+  marker.bindPopup(`
+    <strong>Balise ${zone.id}</strong><br><br>
+    ${zone.description}<br><br>
+    <button onclick="essayerCode(${zone.id})">Entrer le code</button>
+  `);
+
+  zone.marker = marker;
+}
+
+  function essayerCode(zoneId) {
+  const zone = zones.find(z => z.id === zoneId);
+
+  if (!zone || zone.found) return;
+
+  const code = prompt("🔐 Entre le code de la Balise " + zone.id);
+
+  if (!code) return; // le joueur peut annuler et revenir plus tard
+
+  if (code.trim().toLowerCase() === zone.password.toLowerCase()) {
+    validerBalise(zone);
+  } else {
+    alert("❌ Code incorrect. Tu peux réessayer plus tard.");
+  }
+}
+
+  function validerBalise(zone) {
+  zone.found = true;
+
+  alert("🎯 Balise découverte : Balise " + zone.id);
+
+  if (zone.marker) {
+    zone.marker.setPopupContent(`
+      <strong>Balise ${zone.id}</strong><br><br>
+      ${zone.info || "Aucune information disponible."}
+    `);
+    zone.marker.openPopup();
+  } else {
+    const discoveredMarker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+    discoveredMarker.bindPopup(`
+      <strong>Balise ${zone.id}</strong><br><br>
+      ${zone.info || "Aucune information disponible."}
+    `);
+
+    discoveredMarker.openPopup();
+  }
+
+  L.circle([zone.lat, zone.lng], {
+    radius: zone.radius,
+    color: "green",
+    fillOpacity: 0.2
+  }).addTo(map);
+
+  if (navigator.vibrate) navigator.vibrate(200);
+}
 
 // ================= JOUEUR =================
 
@@ -332,13 +402,18 @@ function checkZones(lat, lng) {
     if (dist < zone.radius) {
 
       if (zone.password) {
-        const code = prompt("🔐 Cette balise est verrouillée. Entre le code :");
-
-        if (!code || code.trim().toLowerCase() !== zone.password.toLowerCase()) {
-          alert("❌ Code incorrect.");
-          return;
+        if (!zone.marker) {
+          afficherBaliseVerrouillee(zone);
+          zone.marker.openPopup();
         }
+
+        return; // non bloquant : le joueur peut partir et revenir
       }
+
+      validerBalise(zone);
+    }
+  });
+}
 
       zone.found = true;
 
