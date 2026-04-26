@@ -66,6 +66,26 @@ backdrop-filter: blur(5px);
   background: #007bff;
   color: white;
 }
+  #joker-info {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  font-weight: bold;
+}
+  #select-balise {
+  border: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.95);
+  padding: 10px 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
 .hidden {
   display: none;
 }
@@ -80,6 +100,7 @@ backdrop-filter: blur(5px);
   <button id="btn-indices">📜 Indices</button>
   <button id="btn-boussole">🧭 Boussole</button>
   <button id="btn-lasso">🪢 Lasso</button>
+  <select id="select-balise"></select>
 </div>
 
 <div id="panel-indices" class="hidden">
@@ -94,6 +115,7 @@ backdrop-filter: blur(5px);
 </div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+  <div id="joker-info" class="hidden"></div>
 <script>
 // ================= CARTE =================
 const map = L.map('map').setView([48.822, 2.337], 20);
@@ -352,7 +374,8 @@ fillOpacity: 0.1
   zone.found = true;
     sauvegarderProgression();
 updateProgression();
-  
+  remplirSelectBalises();
+updateJokers();
   alert("🎯 Balise découverte : Balise " + zone.id);
 
   if (zone.marker) {
@@ -392,6 +415,7 @@ updateProgression();
 let startTime = Date.now();
 
 chargerProgression();
+  remplirSelectBalises();
 afficherBalisesDejaTrouvees();
 updateProgression();
 updateChrono();
@@ -399,6 +423,9 @@ updateChrono();
 setInterval(updateChrono, 1000);
 setInterval(sauvegarderProgression, 5000);
 
+  let cibleBoussole = null;
+let cibleLasso = null;
+  
 function updateChrono() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
@@ -439,7 +466,9 @@ function chargerProgression() {
   });
 }
 function getBaliseCible() {
-  return zones.find(zone => !zone.found);
+  const select = document.getElementById("select-balise");
+  const id = Number(select.value);
+  return zones.find(zone => zone.id === id && !zone.found);
 }
 
 function calculerDirection(lat1, lng1, lat2, lng2) {
@@ -468,36 +497,36 @@ function directionTexte(angle) {
 
 function updateJokers() {
   const info = document.getElementById("joker-info");
-  const cible = getBaliseCible();
 
-  if (!lastPlayerPosition || !cible) {
-    info.innerHTML = "Toutes les balises sont trouvées ✅";
-    info.classList.remove("hidden");
-    return;
-  }
-
-  const distance = Math.round(
-    map.distance(
-      [lastPlayerPosition.lat, lastPlayerPosition.lng],
-      [cible.lat, cible.lng]
-    )
-  );
-
-  const angle = calculerDirection(
-    lastPlayerPosition.lat,
-    lastPlayerPosition.lng,
-    cible.lat,
-    cible.lng
-  );
+  if (!lastPlayerPosition) return;
 
   let texte = "";
 
-  if (boussoleActive) {
-    texte += `🧭 Direction : ${directionTexte(angle)} `;
+  if (boussoleActive && cibleBoussole && !cibleBoussole.found) {
+    const angle = calculerDirection(
+      lastPlayerPosition.lat,
+      lastPlayerPosition.lng,
+      cibleBoussole.lat,
+      cibleBoussole.lng
+    );
+
+    texte += `🧭 Balise ${cibleBoussole.id} : ${directionTexte(angle)} `;
   }
 
-  if (lassoActive) {
-    texte += `🪢 Distance : ${distance} m`;
+  if (lassoActive && cibleLasso && !cibleLasso.found) {
+    const distance = Math.round(
+      map.distance(
+        [lastPlayerPosition.lat, lastPlayerPosition.lng],
+        [cibleLasso.lat, cibleLasso.lng]
+      )
+    );
+
+    texte += `🪢 Balise ${cibleLasso.id} : ${distance} m`;
+  }
+
+  if (!texte) {
+    info.classList.add("hidden");
+    return;
   }
 
   info.innerHTML = texte;
@@ -506,16 +535,27 @@ function updateJokers() {
 document.getElementById("btn-indices").addEventListener("click", afficherIndices);
 
 document.getElementById("btn-boussole").addEventListener("click", function () {
+  if (!boussoleActive) {
+    cibleBoussole = getBaliseCible();
+    if (!cibleBoussole) return alert("Choisis une balise disponible.");
+  }
+
   boussoleActive = !boussoleActive;
   this.classList.toggle("active");
   updateJokers();
 });
 
 document.getElementById("btn-lasso").addEventListener("click", function () {
+  if (!lassoActive) {
+    cibleLasso = getBaliseCible();
+    if (!cibleLasso) return alert("Choisis une balise disponible.");
+  }
+
   lassoActive = !lassoActive;
   this.classList.toggle("active");
   updateJokers();
 });
+}
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
