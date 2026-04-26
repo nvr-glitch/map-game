@@ -60,25 +60,141 @@ attribution: 'OpenStreetMap'
 // ================= ZONES =================
 const zones = [
   {
-    id: 1,
-    name: "Balise 1",
+    id: 0,
+    name: "Balise Test",
     lat: 48.8171,
     lng: 2.3328,
     radius: 10,
     found: false,
     description: "Cherche le grand point d’eau au centre du parc.",
-    info: "Le lac du parc Montsouris est l’un des grands repères du parc. Il attire de nombreux oiseaux et sert de point central d’orientation."
+    info: "Le lac du parc Montsouris est l’un des grands repères du parc. Il attire de nombreux oiseaux et sert de point central d’orientation.",
+    password: "victor"
   },
   {
-    id: 2,
-    name: "Balise 2",
-    lat: 48.8232,
-    lng: 2.3379,
-    radius: 30,
+    id: 1,
+    name: "Mire du Sud",
+    lat: 48.8209,
+    lng: 2.33714,
+    radius: 20,
     found: false,
-    description: "Monte légèrement au-dessus du lac et cherche une sculpture visible depuis la pelouse.",
-    info: "info test"
-  }
+    description: "Je suis percée d’un œil vers le ciel, vestige d’un Paris scientifique. Vous me trouverez près d'un sentier qui vous évoque le nord de l'Afrique.",
+    info: "Cette mire était utilisée au XIXe siècle pour aligner les télescopes de l’Observatoire de Paris avec le méridien de Paris. Elle fait partie des rares vestiges du système de mesure pré-Greenwich."
+  },
+    {
+  id: 2,
+    name: "Colonne de la Paix Armée",
+    lat: 48.82367,
+    lng: 2.33638,
+    radius: 10,
+    found: false,
+    description: "À l’entrée du jardin, je lève la main non pour frapper, mais pour garder la paix. Casquée et calme, j’accueille les visiteurs sans jamais reculer.",
+    info: "Cette statue allégorique, déplacée ici depuis l’Esplanade des Invalides, symbolise la force tranquille. Elle date du Second Empire."
+  },
+    {
+     id: 3,
+    name: "La Mort du Lion",
+    lat: 48.82386,
+    lng: 2.33814,
+    radius: 10,
+    found: false,
+    description: "Près de cette balise vous entendrez peut être un dernier rugissement",
+    info: "Cette œuvre de 1929 d'Edmond Desca nommée La Mort du Lion représente la noblesse et la douleur d’un fauve mourant. Un moment figé dans la tragédie."
+  },
+    {  
+  id: 4,
+    name: "Premier Frisson",
+    lat: 48.82069,
+    lng: 2.33818,
+    radius: 10,
+    found: false,
+    description: "Cette statue met en scène un faune, créature mythologique romaine séduisant une jeune fille. Quel est l'animal à leurs pieds ?",
+    info: "Cette sculpture délicate d’une jeune fille évoque l’émotion à la fois physique et psychologique du frisson. Elle date du début XXe siècle.",
+  password: "mouton"
+  },
+    {
+  id: 5,
+    name: "Groupe de baigneuses",
+    lat: 48.8238,
+    lng: 2.3370,
+    radius: 10,
+    found: false,
+    description: "Trouvez les deux soeurs de pierre qui prennent le soleil",
+    info: "Une œuvre décorative typique des jardins publics du XIXe siècle, inspirée par les nymphes et la mythologie."
+       },
+ {
+  id: 6,
+    name: "Les Naufragés",
+    lat: 48.82237,
+    lng: 2.33959,
+    radius: 10,
+    found: false,
+    description: "Si vous aimez danser vous me trouverez non loin. Entre deux dates vous trouverez le nom du sculpteur qui m'a fait. Quel est-il?",
+    info: "La Statue Les Naufragés, réalisée en marbre en 1859, est une sculpture captivante située dans le Parc Montsouris, dans le XIVe arrondissement de Paris. Créée par Antoine Étex, cette œuvre représente un groupe de naufragés, figés dans une scène dramatique et émouvante. Les détails minutieux de la sculpture, tels que les expressions de terreur et de désespoir sur les visages des naufragés, captivent l'attention des visiteurs et les transportent dans un monde de tragédie et de survie.",
+  password: "etex"
+    },
+  {
+  id: 7,
+    name: "Le Drame du désert",
+    lat: 48.82219,
+    lng: 2.3373,
+    radius: 10,
+    found: false,
+    description: "Cette sculpture nommée Drame au Désert met en scène une lionne en prise avec un serpent.",
+    info: "Représentation de 1891 par Georges Gardet sculptée d’un combat entre animaux exotiques, typique de la fascination coloniale pour l’Afrique à l’époque."
+    },
+   {
+  id: 8,
+    name: "Pureté",
+    lat: 48.82096,
+    lng: 2.33828,
+    radius: 10,
+    found: false,
+    description: "Trouvez la statue ci-dessous et complètez la phrase: Les ......... de France de france à la ville de Paris pour son Bimillennaire",
+    info: "Figure féminine idéalisée, symbole d’innocence et d’esthétique classique dans un contexte romantique.",
+  password: "hellenes"
+    },
+  {
+  id: 9,
+    name: "L'accident de carrière",
+    lat: 48.8250,
+    lng: 2.3385,
+    radius: 10,
+    found: false,
+    description: "Je raconte le dur passé des hommes de la pierre. Trouve la scène gravée près d’un talus boisé, témoin d’un métier oublié.",
+    info: "Avant d'être un parc, la plaine Montsouris était occupée par les carrières de Montrouge. Ce passé laissa des traces, et les concepteurs durent faire face à un sous-sol labyrinthique et à la présence de deux voies ferrées. La guerre de 1870 avec la Prusse retarda les travaux, mais le parc fut achevé malgré tout en 1878."
+    },
+  {
+  id: 10,
+    name: "Le Général San Martin",
+    lat: 48.82069,
+    lng: 2.33818,
+    radius: 10,
+    found: false,
+    description: "En quelle année est mort le général San Martin. Trouvez le sur son cheval et vous trouverez la réponse",
+    info: "Libérateur de l’Argentine, San Martín est célébré ici par la diaspora argentine de Paris, en hommage à sa lutte pour l’indépendance.",
+  password: "1850"
+    },
+   {
+  id: 11,
+    name: "Le Citoyen du Monde",
+    lat: 48.82023,
+    lng: 2.33993,
+    radius: 10,
+    found: false,
+    description: "Je fus un des principaux artisans de la révolution américaine et on m'a d'ailleurs placé près de là où se joue un sport américain. Trouvez moi et indiquez mon année de naissance",
+    info: "Paine fut l’un des penseurs majeurs des révolutions américaine et française. Il incarne l’idée d’un monde régi par la raison.",
+  password: "1737"
+    },
+  {
+  id: 12,
+    name: "L'Observatoire",
+    lat: 48.82135,
+    lng: 2.33673,
+    radius: 10,
+    found: false,
+    description: "Ma tête est dans les nuages, mes yeux mesurent le vent. Viens me trouver au sommet, là où la science regarde le ciel.",
+    info: "Fondé en 1878, cet observatoire analyse la météo parisienne depuis plus d’un siècle. Un centre discret mais essentiel."
+    },
 ];
 
 const btnIndices = document.getElementById("btn-indices");
@@ -193,12 +309,19 @@ function checkZones(lat, lng) {
 
     if (zone.found) return;
 
-    const dist = map.distance(
-      [lat, lng],
-      [zone.lat, zone.lng]
-    );
+    const dist = map.distance([lat, lng], [zone.lat, zone.lng]);
 
     if (dist < zone.radius) {
+
+      if (zone.password) {
+        const code = prompt("🔐 Cette balise est verrouillée. Entre le code :");
+
+        if (!code || code.trim().toLowerCase() !== zone.password.toLowerCase()) {
+          alert("❌ Code incorrect.");
+          return;
+        }
+      }
+
       zone.found = true;
 
       alert("🎯 Balise découverte : " + zone.name);
@@ -222,7 +345,6 @@ function checkZones(lat, lng) {
     }
   });
 }
-
 
 </script>
 
