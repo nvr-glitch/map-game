@@ -26,6 +26,8 @@ html, body { margin:0; height:100%; }
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
   font-weight: bold;
+  background: rgba(255,255,255,0.9);
+backdrop-filter: blur(5px);
 }
 
 #btn-indices {
@@ -39,6 +41,56 @@ html, body { margin:0; height:100%; }
   padding: 12px 16px;
   font-weight: bold;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+#panel-indices {
+  position: absolute;
+  top: 70px;
+  right: 15px;
+  width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: white;
+  z-index: 1000;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+}
+  #btn-boussole {
+  position: absolute;
+  top: 70px;
+  right: 15px;
+  z-index: 1000;
+}
+
+#btn-lasso {
+  position: absolute;
+  top: 120px;
+  right: 15px;
+  z-index: 1000;
+}
+
+#btn-boussole,
+#btn-lasso {
+  border: none;
+  border-radius: 999px;
+  background: white;
+  padding: 12px 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+#joker-info {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  font-weight: bold;
 }
 .hidden {
   display: none;
@@ -59,6 +111,9 @@ html, body { margin:0; height:100%; }
   <div id="progression"></div>
   <div id="chrono"></div>
 </div>
+  <button id="btn-boussole">🧭 Boussole</button>
+<button id="btn-lasso">🪢 Lasso</button>
+<div id="joker-info" class="hidden"></div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
@@ -243,26 +298,30 @@ const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
 
 function afficherIndices() {
+  if (!panelIndices.classList.contains("hidden")) {
+    panelIndices.classList.add("hidden");
+    return;
+  }
+
   listeIndices.innerHTML = "";
 
   zones.forEach(zone => {
     const item = document.createElement("div");
 
-    let contenu = "";
-
     if (zone.found) {
-      contenu = `
+      item.innerHTML = `
         <strong>Balise ${zone.id} ✅</strong>
         <p>${zone.info || "Aucune information disponible."}</p>
+        <hr>
       `;
     } else {
-      contenu = `
+      item.innerHTML = `
         <strong>Balise ${zone.id} 🔒</strong>
         <p>${zone.description}</p>
+        <hr>
       `;
     }
 
-    item.innerHTML = contenu + "<hr>";
     listeIndices.appendChild(item);
   });
 
@@ -402,7 +461,80 @@ function chargerProgression() {
     if (zone) zone.found = savedZone.found;
   });
 }
+function getBaliseCible() {
+  return zones.find(zone => !zone.found);
+}
 
+function calculerDirection(lat1, lng1, lat2, lng2) {
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  lat1 = lat1 * Math.PI / 180;
+  lat2 = lat2 * Math.PI / 180;
+
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+  const angle = Math.atan2(y, x) * 180 / Math.PI;
+  return (angle + 360) % 360;
+}
+
+function directionTexte(angle) {
+  if (angle >= 337.5 || angle < 22.5) return "Nord";
+  if (angle < 67.5) return "Nord-Est";
+  if (angle < 112.5) return "Est";
+  if (angle < 157.5) return "Sud-Est";
+  if (angle < 202.5) return "Sud";
+  if (angle < 247.5) return "Sud-Ouest";
+  if (angle < 292.5) return "Ouest";
+  return "Nord-Ouest";
+}
+
+function updateJokers() {
+  const info = document.getElementById("joker-info");
+  const cible = getBaliseCible();
+
+  if (!lastPlayerPosition || !cible) {
+    info.innerHTML = "Toutes les balises sont trouvées ✅";
+    info.classList.remove("hidden");
+    return;
+  }
+
+  const distance = Math.round(
+    map.distance(
+      [lastPlayerPosition.lat, lastPlayerPosition.lng],
+      [cible.lat, cible.lng]
+    )
+  );
+
+  const angle = calculerDirection(
+    lastPlayerPosition.lat,
+    lastPlayerPosition.lng,
+    cible.lat,
+    cible.lng
+  );
+
+  let texte = "";
+
+  if (boussoleActive) {
+    texte += `🧭 Direction : ${directionTexte(angle)} `;
+  }
+
+  if (lassoActive) {
+    texte += `🪢 Distance : ${distance} m`;
+  }
+
+  info.innerHTML = texte;
+  info.classList.remove("hidden");
+}
+  document.getElementById("btn-boussole").addEventListener("click", function () {
+  boussoleActive = !boussoleActive;
+  updateJokers();
+});
+
+document.getElementById("btn-lasso").addEventListener("click", function () {
+  lassoActive = !lassoActive;
+  updateJokers();
+});
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
@@ -419,7 +551,9 @@ const playerIcon = L.icon({
 
 let player = null;
 let accuracyCircle = null;
-
+let lastPlayerPosition = null;
+let boussoleActive = false;
+let lassoActive = false;
 // succès GPS
 function success(pos) {
   const lat = pos.coords.latitude;
@@ -429,7 +563,11 @@ function success(pos) {
   console.log("GPS :", lat, lng);
 
   const position = [lat, lng];
+lastPlayerPosition = { lat, lng };
 
+if (boussoleActive || lassoActive) {
+  updateJokers();
+}
   // création du joueur
   if (!player) {
     player = L.marker(position, {
@@ -493,6 +631,8 @@ if ("geolocation" in navigator) {
     }
   });
 }
+
+
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
   zones.forEach(zone => {
