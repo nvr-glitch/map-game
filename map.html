@@ -62,6 +62,10 @@ backdrop-filter: blur(5px);
   font-weight: bold;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
 }
+  #topbar button.active {
+  background: #007bff;
+  color: white;
+}
 .hidden {
   display: none;
 }
@@ -71,16 +75,23 @@ backdrop-filter: blur(5px);
 <body>
 
 <div id="map"></div>
+
 <div id="topbar">
   <button id="btn-indices">📜 Indices</button>
   <button id="btn-boussole">🧭 Boussole</button>
   <button id="btn-lasso">🪢 Lasso</button>
 </div>
+
+<div id="panel-indices" class="hidden">
+  <h3>Descriptions des balises</h3>
+  <div id="liste-indices"></div>
+  <button onclick="fermerIndices()">Fermer</button>
+</div>
+
 <div id="hud">
   <div id="progression"></div>
   <div id="chrono"></div>
 </div>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
@@ -493,13 +504,15 @@ function updateJokers() {
   info.innerHTML = texte;
   info.classList.remove("hidden");
 }
-  document.getElementById("btn-boussole").addEventListener("click", function () {
+ document.getElementById("btn-boussole").addEventListener("click", function () {
   boussoleActive = !boussoleActive;
+  this.classList.toggle("active");
   updateJokers();
 });
 
 document.getElementById("btn-lasso").addEventListener("click", function () {
   lassoActive = !lassoActive;
+  this.classList.toggle("active");
   updateJokers();
 });
 // ================= JOUEUR =================
