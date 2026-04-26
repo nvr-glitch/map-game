@@ -92,6 +92,25 @@ backdrop-filter: blur(5px);
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
   font-weight: bold;
 }
+
+  #topbar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+
+#topbar button {
+  border: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.95);
+  padding: 10px 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
 .hidden {
   display: none;
 }
@@ -101,19 +120,16 @@ backdrop-filter: blur(5px);
 <body>
 
 <div id="map"></div>
-<button id="btn-indices">📜 Indices</button>
-<div id="panel-indices" class="hidden">
-  <h3>Descriptions des balises</h3>
-  <div id="liste-indices"></div>
-  <button onclick="fermerIndices()">Fermer</button>
+<div id="topbar">
+  <button id="btn-indices">📜 Indices</button>
+  <button id="btn-boussole">🧭 Boussole</button>
+  <button id="btn-lasso">🪢 Lasso</button>
 </div>
 <div id="hud">
   <div id="progression"></div>
   <div id="chrono"></div>
 </div>
-  <button id="btn-boussole">🧭 Boussole</button>
-<button id="btn-lasso">🪢 Lasso</button>
-<div id="joker-info" class="hidden"></div>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
