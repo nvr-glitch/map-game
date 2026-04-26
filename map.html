@@ -81,7 +81,26 @@ html, body { margin:0; height:100%; }
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
   font-weight: bold;
 }
+#compass {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 70px;
+  height: 70px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+#compass-arrow {
+  font-size: 34px;
+  transform-origin: center;
+}
 .hidden {
   display: none;
 }
@@ -103,7 +122,9 @@ html, body { margin:0; height:100%; }
 </div>
 
 <div id="joker-info" class="hidden"></div>
-
+<div id="compass" class="hidden">
+  <div id="compass-arrow">⬆️</div>
+</div>
 <div id="hud">
   <div id="progression"></div>
   <div id="chrono"></div>
@@ -281,7 +302,7 @@ let startTime = Date.now();
 let player = null;
 let accuracyCircle = null;
 let lastPlayerPosition = null;
-
+let heading = 0;
 let boussoleActive = false;
 let lassoActive = false;
 let cibleBoussole = null;
@@ -399,6 +420,7 @@ function activerBoussole(zoneId) {
   if (!cibleBoussole) return;
 
   boussoleActive = true;
+  startCompass();
   panelIndices.classList.add("hidden");
   updateJokers();
 }
@@ -431,7 +453,13 @@ function updateJokers() {
       cibleBoussole.lng
     );
 
-    texte += `🧭 Balise ${cibleBoussole.id} : ${directionTexte(angle)} `;
+    const rotation = angle - heading;
+
+document.getElementById("compass").classList.remove("hidden");
+document.getElementById("compass-arrow").style.transform =
+  `rotate(${rotation}deg)`;
+
+texte += `🧭 Balise ${cibleBoussole.id}`;
   }
 
   if (lassoActive && cibleLasso && !cibleLasso.found) {
@@ -453,7 +481,18 @@ function updateJokers() {
   info.innerHTML = texte;
   info.classList.remove("hidden");
 }
+  
+function startCompass() {
+  window.addEventListener("deviceorientation", function(event) {
+    if (event.webkitCompassHeading) {
+      heading = event.webkitCompassHeading;
+    } else if (event.alpha !== null) {
+      heading = 360 - event.alpha;
+    }
 
+    updateJokers();
+  });
+}
 // ================= BALISES =================
 function afficherBaliseVerrouillee(zone) {
   const marker = L.marker([zone.lat, zone.lng]).addTo(map);
