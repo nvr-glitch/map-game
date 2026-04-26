@@ -237,29 +237,11 @@ const zones = [
     info: ""
     },
 ];
-  chargerProgression();
-zones.forEach(zone => {
-  if (zone.found) {
-    const marker = L.marker([zone.lat, zone.lng]).addTo(map);
-
-    marker.bindPopup(`
-      <strong>Balise ${zone.id}</strong><br><br>
-      ${zone.info || ""}
-    `);
-
-    L.circle([zone.lat, zone.lng], {
-      radius: zone.radius,
-      color: "green",
-      fillOpacity: 0.2
-    }).addTo(map);
-  }
-});
-updateProgression();
+  
 const btnIndices = document.getElementById("btn-indices");
 const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
 
- updateChrono();
 function afficherIndices() {
   listeIndices.innerHTML = "";
 
@@ -372,7 +354,14 @@ updateProgression();
 }
 
 let startTime = Date.now();
+
 chargerProgression();
+afficherBalisesDejaTrouvees();
+updateProgression();
+updateChrono();
+
+setInterval(updateChrono, 1000);
+setInterval(sauvegarderProgression, 5000);
 
 function updateChrono() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -384,8 +373,6 @@ function updateChrono() {
     `Temps : ${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-setInterval(updateChrono, 1000);
-updateChrono();
 
 function sauvegarderProgression() {
   const data = {
@@ -415,7 +402,7 @@ function chargerProgression() {
     if (zone) zone.found = savedZone.found;
   });
 }
-}
+
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
@@ -486,7 +473,25 @@ if ("geolocation" in navigator) {
 } else {
   alert("GPS non supporté");
 
-  setInterval(sauvegarderProgression, 5000);
+}
+
+  function afficherBalisesDejaTrouvees() {
+  zones.forEach(zone => {
+    if (zone.found) {
+      const marker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+      marker.bindPopup(`
+        <strong>Balise ${zone.id}</strong><br><br>
+        ${zone.info || "Aucune information disponible."}
+      `);
+
+      L.circle([zone.lat, zone.lng], {
+        radius: zone.radius,
+        color: "green",
+        fillOpacity: 0.2
+      }).addTo(map);
+    }
+  });
 }
 // ================= VALIDATION =================
 function checkZones(lat, lng) {
