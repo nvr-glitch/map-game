@@ -253,6 +253,23 @@ const btnIndices = document.getElementById("btn-indices");
 const panelIndices = document.getElementById("panel-indices");
 const listeIndices = document.getElementById("liste-indices");
 
+  chargerProgression();
+zones.forEach(zone => {
+  if (zone.found) {
+    const marker = L.marker([zone.lat, zone.lng]).addTo(map);
+
+    marker.bindPopup(`
+      <strong>Balise ${zone.id}</strong><br><br>
+      ${zone.info || ""}
+    `);
+
+    L.circle([zone.lat, zone.lng], {
+      radius: zone.radius,
+      color: "green",
+      fillOpacity: 0.2
+    }).addTo(map);
+  }
+});
 function afficherIndices() {
   listeIndices.innerHTML = "";
 
@@ -326,6 +343,7 @@ fillOpacity: 0.1
   function validerBalise(zone) {
   zone.found = true;
 updateProgression();
+  sauvegarderProgression();
   alert("🎯 Balise découverte : Balise " + zone.id);
 
   if (zone.marker) {
@@ -376,6 +394,30 @@ function updateChrono() {
 
 setInterval(updateChrono, 1000);
 updateChrono();
+
+function sauvegarderProgression() {
+  const data = zones.map(zone => ({
+    id: zone.id,
+    found: zone.found
+  }));
+
+  localStorage.setItem("progression", JSON.stringify(data));
+}
+
+  function chargerProgression() {
+  const saved = localStorage.getItem("progression");
+
+  if (!saved) return;
+
+  const data = JSON.parse(saved);
+
+  data.forEach(savedZone => {
+    const zone = zones.find(z => z.id === savedZone.id);
+    if (zone) {
+      zone.found = savedZone.found;
+    }
+  });
+}
 // ================= JOUEUR =================
 
 // Icône joueur (point bleu type Google Maps)
