@@ -101,6 +101,11 @@ html, body { margin:0; height:100%; }
   font-size: 34px;
   transform-origin: center;
 }
+
+#btn-reset {
+  background: #ff4d4d;
+  color: white;
+}
 .hidden {
   display: none;
 }
@@ -114,7 +119,7 @@ html, body { margin:0; height:100%; }
 <div id="topbar">
   <button id="btn-indices">📜 Indices</button>
 </div>
-
+<button id="btn-reset">🔄 Reset</button>
 <div id="panel-indices" class="hidden">
   <h3>Descriptions des balises</h3>
   <div id="liste-indices"></div>
@@ -640,6 +645,26 @@ function error(err) {
   alert("Erreur GPS : " + err.message);
 }
 
+  document.getElementById("btn-reset").addEventListener("click", function () {
+
+  const confirmReset = confirm("⚠️ Réinitialiser la partie ?");
+
+  if (!confirmReset) return;
+
+  // reset des données
+  localStorage.removeItem("progressionJeu");
+
+  // reset mémoire
+  zones.forEach(zone => {
+    zone.found = false;
+    zone.marker = null;
+  });
+
+  startTime = Date.now();
+
+  // reset visuel → reload simple (le plus propre)
+  location.reload();
+});
 // ================= INIT =================
 chargerProgression();
 afficherBalisesDejaTrouvees();
